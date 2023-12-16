@@ -1,0 +1,16 @@
+{
+  # 保存時に自動でコードフォーマットを有効
+  "editor.formatOnSave": true,
+
+  # コードフォーマットを無効化したい場合 (command + K  Sでも可)
+  # 保存時 / 入力時 / 貼り付け時 /保存時行末のスペース削除
+  "editor.formatOnSave": false,
+  "editor.formatOnType": false,
+  "editor.formatOnPaste": false,
+  "files.trimTrailingWhitespace": false
+
+  # 言語別に設定したい場合
+  "[python]": {
+    "editor.formatOnSave": true
+  },
+}
