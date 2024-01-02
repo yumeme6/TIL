@@ -4,11 +4,11 @@
 Atlassian
 
 ## Bitbucketとは
-Gitのホスティングサービスであり、Webベースでのバージョン管理システム
+Git(またはMercurial)のホスティングサービスであり、Webベースでのバージョン管理システム
 
 ## githubと何が違うの？
 gitHub：privete有料
 Bitbucket：5ユーザーまでは無料
 
 ## 類似ツールについて
-TortoiseSVNとほぼ同義である（WebベースかExplorerベースかの差異がある）
+集中/分散の違いはあるが、TortoiseSVNとほぼ同義である（WebベースかExplorerベースかの差異がある）
