@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""モジュールの説明タイトル
+"""[.webp]→[.png]変換
 
-* ソースコードの一番始めに記載すること
-* importより前に記載する
-
-Todo:
-    TODOリストを記載
-    * conf.pyの``sphinx.ext.todo`` を有効にしないと使用できない
-    * conf.pyの``todo_include_todos = True``にしないと表示されない
+フォルダを指定し、指定したフォルダ内のwebp形式の画像をpng形式の画像に変換する。
 
 """
 
@@ -29,7 +23,7 @@ def convert_webp_to_png(webp_file):
         webp_file (str): ファイルpath
 
     Returns:
-        return:
+        return:処理成功/失敗
     """
 
     # 出力ファイル名を取得
@@ -62,7 +56,7 @@ def process_folder(folder_selected):
     Args:
         folder_selected (str): フォルダpath
 
-    Returns:
+    Returns:処理成功/失敗
 
     """
     # フォルダ内のWebp画像を取得
