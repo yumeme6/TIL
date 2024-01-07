@@ -106,7 +106,7 @@ live_data, live_labels = create_labeled_data("python/training/live", label=0)
 anime_data, anime_labels = create_labeled_data("python/training/anime", label=1)
 cg_data, cg_labels = create_labeled_data("python/training/cg", label=2)
 
-# Positive（実写映像）とanime（アニメ映像）のデータを結合し、シャッフル
+# 学習データを結合し、シャッフル
 all_data = live_data + anime_data + cg_data
 all_labels = live_labels + anime_labels + cg_labels
 combined_data = list(zip(all_data, all_labels))
@@ -137,5 +137,5 @@ model.fit(
     batch_size=32,
 )
 
-# モデルの保存（Keras形式:tf）
-model.save("D:/Users/yume/Documents/VSCode/TIL/TIL/python/model", save_format="tf")
+# モデルの保存（Keras形式）
+model.save("python/model", save_format="tf")
