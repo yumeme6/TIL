@@ -11,6 +11,9 @@
 Todo:
     * CUDAを使用する用にする。
 
+Bag:
+    * 44.2 GiBのメモリ不足状態
+
 """
 
 import os
@@ -22,7 +25,7 @@ from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from sklearn.model_selection import train_test_split
 
 # フレームごとの画像サイズ
-img_size = (224, 224)
+img_size = (128, 128)
 
 
 def get_frames(video_path):
@@ -86,16 +89,16 @@ def build_model():
     model = models.Sequential()
     model.add(
         layers.Conv2D(
-            32, (3, 3), activation="relu", input_shape=(img_size[0], img_size[1], 3)
+            16, (3, 3), activation="relu", input_shape=(img_size[0], img_size[1], 3)
         )
     )
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.MaxPooling2D((4, 4)))
+    model.add(layers.Conv2D(32, (3, 3), activation="relu"))
+    model.add(layers.MaxPooling2D((4, 4)))
     model.add(layers.Conv2D(64, (3, 3), activation="relu"))
-    model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(128, (3, 3), activation="relu"))
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.MaxPooling2D((4, 4)))
     model.add(layers.Flatten())
-    model.add(layers.Dense(64, activation="relu"))
+    model.add(layers.Dense(32, activation="relu"))
     model.add(layers.Dense(1, activation="sigmoid"))
 
     return model
