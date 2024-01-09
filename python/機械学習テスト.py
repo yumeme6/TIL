@@ -12,7 +12,7 @@ Todo:
     * CUDAを使用する用にする。
 
 Bag:
-    * 44.2 GiBのメモリ不足状態
+    * 7GBのメモリ不足状態
 
 """
 
@@ -21,11 +21,11 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers, models
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from sklearn.model_selection import train_test_split
 
-# フレームごとの画像サイズ
-img_size = (128, 128)
+
+img_size = (128, 128)# フレームごとの画像サイズ
+frame_interval = 5 #サンプリングする際の間隔
 
 
 def get_frames(video_path):
@@ -41,12 +41,15 @@ def get_frames(video_path):
     print(f"処理開始：{os.path.basename(video_path)}")
     cap = cv2.VideoCapture(video_path)  # OpenCVで動画を開く
 
+    frame_count = 0
     while True:
         ret, frame = cap.read()  # フレームを1枚ずつ読み込む
         if not ret:
             break
-        frame = cv2.resize(frame, img_size)  # リサイズ
-        frames.append(frame)
+        if frame_count % frame_interval == 0:
+            frame = cv2.resize(frame, img_size)  # リサイズ
+            frames.append(frame)
+        frame_count += 1
 
     cap.release()
     return frames
@@ -71,7 +74,9 @@ def create_labeled_data(folder_path, label):
         if filename.endswith(".mp4"):
             video_path = os.path.join(folder_path, filename)
             frames = get_frames(video_path)  # 動画からフレームを取得
-            video_data = [img_to_array(frame) for frame in frames]  # フレームをNumPy配列に変換
+            video_data = [
+                cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) for frame in frames
+            ]  # フレームをNumPy配列に変換
             data.extend(video_data)
             labels.extend([label] * len(video_data))
 
@@ -110,15 +115,15 @@ anime_data, anime_labels = create_labeled_data("python/training/anime", label=1)
 cg_data, cg_labels = create_labeled_data("python/training/cg", label=2)
 
 # 学習データを結合し、シャッフル
-all_data = live_data + anime_data + cg_data
-all_labels = live_labels + anime_labels + cg_labels
-combined_data = list(zip(all_data, all_labels))
-np.random.shuffle(combined_data)
-all_data, all_labels = zip(*combined_data)
+all_data = np.concatenate((live_data, anime_data, cg_data), axis=0)
+all_labels = np.concatenate((live_labels, anime_labels, cg_labels), axis=0)
 
-#  データをNumPy配列に変換し、ピクセル値を0から1の範囲にスケーリング
-all_data = np.array(all_data) / 255.0
-all_labels = np.array(all_labels)
+# インデックスをシャッフル
+indices = np.random.permutation(len(all_data))
+all_data, all_labels = all_data[indices], all_labels[indices]
+
+# ピクセル値を0から1の範囲にスケーリング
+all_data = all_data / 255.0
 
 # 訓練データとテストデータに分割
 train_data, test_data, train_labels, test_labels = train_test_split(
