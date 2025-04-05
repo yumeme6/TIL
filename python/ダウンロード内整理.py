@@ -11,45 +11,57 @@
 
 import os
 import shutil
-import tkinter as tk
-from tkinter import filedialog
+import re
+
+
+# ======== 拡張子の定義 ========
+DELETE_EXTS = (".zip", ".rar", ".7z", ".exe", ".msi", ".unitypackage", ".htm")
+VIDEO_EXTS = (".mp4", ".mov", ".mkv")
+IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".gif", ".psd")
+OFFICE_EXTS = (".xlsm", ".xlsx", ".xls", ".csv", ".pptx", ".pdf", ".docx")
+
+
+# ======== フォルダの定義 ========
+DOWNLOAD_FOLDER = r"Downloads"
+VIDEO_FOLDER = r"Videos\動画系"
 
 
 def main():
-    # フォルダを選択するダイアログボックスを表示
-    root = tk.Tk()
-    root.withdraw()
-    folder_path = filedialog.askdirectory(title="フォルダを選択してください")
+    for filename in os.listdir(DOWNLOAD_FOLDER):
+        file_path = os.path.join(DOWNLOAD_FOLDER, filename)
 
-    # フォルダが指定されている場合、処理を実行
-    if folder_path:
-        # フォルダ内のファイルに対しループ処理
-        for filename in os.listdir(folder_path):
-            # ファイルパスを取得
-            file_path = os.path.join(folder_path, filename)
+        if not os.path.isfile(file_path):
+            continue
 
-            # 指定された拡張子の場合、削除
-            if filename.endswith(
-                tuple([".zip", ".rar", ".7z", ".exe", ".msi", ".unitypackage"])
-            ):
-                os.remove(file_path)
+        # ❌ 削除対象
+        if filename.endswith(DELETE_EXTS):
+            os.remove(file_path)
 
-            # 指定された拡張子の場合、動画系フォルダに移動
-            elif filename.endswith(tuple([".mp4", ".mov", ".mkv"])):
-                shutil.move(file_path, os.path.join(folder_path, "動画系"))
+        # 🎥 動画:ファイル名に日付パターン
+        elif filename.endswith(VIDEO_EXTS) and re.search(
+            r"\d{2}-\d{2}-\d{2}", filename
+        ):
+            target = os.path.join(VIDEO_FOLDER, "FC")
+            os.makedirs(target, exist_ok=True)
+            shutil.move(file_path, target)
 
-            # 指定された拡張子の場合、写真系フォルダに移動
-            elif filename.endswith(tuple([".jpg", ".jpeg", ".png", ".gif", ".psd"])):
-                shutil.move(file_path, os.path.join(folder_path, "写真系"))
+        # 🎞️ 動画:通常
+        elif filename.endswith(VIDEO_EXTS):
+            target = os.path.join(VIDEO_FOLDER, "動画系")
+            os.makedirs(target, exist_ok=True)
+            shutil.move(file_path, target)
 
-            # 指定された拡張子の場合、office系"フォルダに移動
-            elif filename.endswith(
-                tuple([".xlsm", ".xlsx", ".xls", ".csv", ".pptx", ".pdf", ".docx"])
-            ):
-                shutil.move(file_path, os.path.join(folder_path, "office系"))
+        # 🖼️ 写真系
+        elif filename.endswith(IMAGE_EXTS):
+            target = os.path.join(DOWNLOAD_FOLDER, "写真系")
+            os.makedirs(target, exist_ok=True)
+            shutil.move(file_path, target)
 
-    # プログラムを終了
-    root.destroy()
+        # 📄 Office系
+        elif filename.endswith(OFFICE_EXTS):
+            target = os.path.join(DOWNLOAD_FOLDER, "office系")
+            os.makedirs(target, exist_ok=True)
+            shutil.move(file_path, target)
 
 
 if __name__ == "__main__":
